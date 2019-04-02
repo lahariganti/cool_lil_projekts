@@ -9,34 +9,54 @@
 import UIKit
 
 class ViewController: UIViewController, URLSessionDownloadDelegate {
+    let urlString = "https://firebasestorage.googleapis.com/v0/b/firestorechat-e64ac.appspot.com/o/intermediate_training_rec.mp4?alt=media&token=e20261d0-7219-49d2-b32d-367e1606500c"
     let shapeLayer = CAShapeLayer()
     let trackLayer = CAShapeLayer()
     let percentageLabel: UILabel = {
         let label = UILabel()
         label.text = "Start"
+        label.textColor = .white
         label.textAlignment = .center
         label.font = UIFont.boldSystemFont(ofSize: 25)
         return label
     }()
 
+    var pulsatingLayer = CAShapeLayer()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.backgroundColor
+        setupLayers()
+    }
+
+    func setupLayers() {
         let circularPath = UIBezierPath(arcCenter: .zero, radius: 80, startAngle: 0, endAngle: 2 * CGFloat.pi, clockwise: true)
 
         trackLayer.path = circularPath.cgPath
 
-        trackLayer.strokeColor = UIColor.lightGray.cgColor
-        trackLayer.lineWidth = 10
+        trackLayer.strokeColor = UIColor.trackStrokeColor.cgColor
+        trackLayer.lineWidth = 20
         trackLayer.lineCap = .round
-        trackLayer.fillColor = UIColor.clear.cgColor
+        trackLayer.fillColor = UIColor.backgroundColor.cgColor
         trackLayer.position = view.center
         view.layer.addSublayer(trackLayer)
 
+
+        pulsatingLayer.path = circularPath.cgPath
+
+        pulsatingLayer.strokeColor = UIColor.pulsatingFillColor.cgColor
+        pulsatingLayer.lineWidth = 20
+        pulsatingLayer.lineCap = .round
+        pulsatingLayer.fillColor = UIColor.clear.cgColor
+        pulsatingLayer.position = view.center
+        view.layer.addSublayer(pulsatingLayer)
+
+        animatingPulsatingLayer()
+
         shapeLayer.path = circularPath.cgPath
         shapeLayer.position = view.center
-        shapeLayer.strokeColor = UIColor.red.cgColor
-        shapeLayer.lineWidth = 10
+        shapeLayer.strokeColor = UIColor.outlineStrokeColor.cgColor
+        shapeLayer.lineWidth = 20
         shapeLayer.strokeEnd = 0
         shapeLayer.lineCap = .round
         shapeLayer.fillColor = UIColor.clear.cgColor
@@ -49,7 +69,15 @@ class ViewController: UIViewController, URLSessionDownloadDelegate {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(objectTapped)))
     }
 
-    let urlString = "https://firebasestorage.googleapis.com/v0/b/firestorechat-e64ac.appspot.com/o/intermediate_training_rec.mp4?alt=media&token=e20261d0-7219-49d2-b32d-367e1606500c"
+    private func animatingPulsatingLayer() {
+        let animation = CABasicAnimation(keyPath: "transform.scale")
+        animation.toValue = 1.5
+        animation.duration = 0.8
+        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+        animation.autoreverses = true
+        animation.repeatCount = Float.infinity
+        pulsatingLayer.add(animation, forKey: "pulsating")
+    }
 
     private func beginDownloading() {
         shapeLayer.strokeEnd = 0
