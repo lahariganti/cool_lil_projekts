@@ -26,32 +26,25 @@ class ViewController: UIViewController, URLSessionDownloadDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.backgroundColor
-        setupLayers()
-    }
 
-    func setupLayers() {
         let circularPath = UIBezierPath(arcCenter: .zero, radius: 80, startAngle: 0, endAngle: 2 * CGFloat.pi, clockwise: true)
 
-        trackLayer.path = circularPath.cgPath
+        pulsatingLayer.path = circularPath.cgPath
+        pulsatingLayer.strokeColor = UIColor.clear.cgColor
+        pulsatingLayer.lineWidth = 20
+        pulsatingLayer.lineCap = .round
+        pulsatingLayer.fillColor = UIColor.pulsatingFillColor.cgColor
+        pulsatingLayer.position = view.center
+        view.layer.addSublayer(pulsatingLayer)
+        animatingPulsatingLayer()
 
+        trackLayer.path = circularPath.cgPath
         trackLayer.strokeColor = UIColor.trackStrokeColor.cgColor
         trackLayer.lineWidth = 20
         trackLayer.lineCap = .round
         trackLayer.fillColor = UIColor.backgroundColor.cgColor
         trackLayer.position = view.center
         view.layer.addSublayer(trackLayer)
-
-
-        pulsatingLayer.path = circularPath.cgPath
-
-        pulsatingLayer.strokeColor = UIColor.pulsatingFillColor.cgColor
-        pulsatingLayer.lineWidth = 20
-        pulsatingLayer.lineCap = .round
-        pulsatingLayer.fillColor = UIColor.clear.cgColor
-        pulsatingLayer.position = view.center
-        view.layer.addSublayer(pulsatingLayer)
-
-        animatingPulsatingLayer()
 
         shapeLayer.path = circularPath.cgPath
         shapeLayer.position = view.center
@@ -95,6 +88,7 @@ class ViewController: UIViewController, URLSessionDownloadDelegate {
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        print(totalBytesWritten, totalBytesExpectedToWrite)
         let percentage = CGFloat(totalBytesWritten)  / CGFloat(totalBytesExpectedToWrite)
         DispatchQueue.main.async {
             self.shapeLayer.strokeEnd = percentage
@@ -112,7 +106,6 @@ class ViewController: UIViewController, URLSessionDownloadDelegate {
     }
 
     @objc func objectTapped() {
-//        animateCircle()
         beginDownloading()
     }
 }
